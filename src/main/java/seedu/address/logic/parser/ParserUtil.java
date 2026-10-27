@@ -10,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +21,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.SessionCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.MeasurementType;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.progress.ExerciseName;
@@ -155,6 +157,21 @@ public class ParserUtil {
             throw new ParseException(invalidFormatMessage);
         }
         return parseClientIndex(oneBasedIndex);
+    }
+
+    /**
+     * Parses a measurement type, ignoring surrounding whitespace and letter case.
+     * AI assistance: Helen used OpenAI Codex to share measurement parsing for issue #170.
+     *
+     * @throws ParseException if the type is unsupported.
+     */
+    public static MeasurementType parseMeasurementType(String type) throws ParseException {
+        requireNonNull(type);
+        try {
+            return MeasurementType.valueOf(type.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new ParseException(MeasurementType.MESSAGE_CONSTRAINTS, e);
+        }
     }
 
     /**

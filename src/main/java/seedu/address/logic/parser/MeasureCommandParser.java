@@ -6,7 +6,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_MEASUREMENT_VALUE;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Locale;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.MeasureCommand;
@@ -30,15 +29,11 @@ public class MeasureCommandParser implements Parser<MeasureCommand> {
             }
         }
         try {
-            Index index;
-            try {
-                index = ParserUtil.parseIndex(arguments.getPreamble());
-            } catch (ParseException e) {
-                throw new ParseException(MeasureCommand.MESSAGE_INVALID_INDEX, e);
-            }
+            Index index = ParserUtil.parseClientIndex(arguments.getPreamble());
             LocalDate date = ParserUtil.parseRecordDate(arguments.getValue(PREFIX_DATE).orElseThrow(),
                     Measurement.MESSAGE_FUTURE_DATE);
-            MeasurementType type = parseType(arguments.getValue(PREFIX_MEASUREMENT_TYPE).orElseThrow());
+            MeasurementType type = ParserUtil.parseMeasurementType(
+                    arguments.getValue(PREFIX_MEASUREMENT_TYPE).orElseThrow());
             String value = arguments.getValue(PREFIX_MEASUREMENT_VALUE).orElseThrow().trim();
             if (!value.matches("[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)")) {
                 throw new ParseException(MESSAGE_NON_NUMERIC);
@@ -48,14 +43,6 @@ public class MeasureCommandParser implements Parser<MeasureCommand> {
             throw new ParseException(e.getMessage() + "\nUse: " + MeasureCommand.MESSAGE_USAGE, e);
         } catch (IllegalArgumentException e) {
             throw new ParseException(e.getMessage() + "\nUse: " + MeasureCommand.MESSAGE_USAGE, e);
-        }
-    }
-
-    private MeasurementType parseType(String type) throws ParseException {
-        try {
-            return MeasurementType.valueOf(type.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-            throw new ParseException(MeasurementType.MESSAGE_CONSTRAINTS, e);
         }
     }
 }

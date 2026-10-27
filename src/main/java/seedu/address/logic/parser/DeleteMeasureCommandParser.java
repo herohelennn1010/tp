@@ -5,7 +5,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_MEASUREMENT_TYPE;
 
 import java.time.LocalDate;
-import java.util.Locale;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteMeasureCommand;
@@ -26,20 +25,10 @@ public class DeleteMeasureCommandParser implements Parser<DeleteMeasureCommand> 
             throw new ParseException(DeleteMeasureCommand.MESSAGE_INVALID_FORMAT);
         }
         try {
-            Index index;
-            try {
-                index = ParserUtil.parseIndex(arguments.getPreamble());
-            } catch (ParseException e) {
-                throw new ParseException(DeleteMeasureCommand.MESSAGE_INVALID_INDEX, e);
-            }
+            Index index = ParserUtil.parseClientIndex(arguments.getPreamble());
             LocalDate date = ParserUtil.parseExistingRecordDate(arguments.getValue(PREFIX_DATE).orElseThrow());
-            MeasurementType type;
-            try {
-                type = MeasurementType.valueOf(arguments.getValue(PREFIX_MEASUREMENT_TYPE).orElseThrow()
-                        .trim().toUpperCase(Locale.ROOT));
-            } catch (IllegalArgumentException e) {
-                throw new ParseException(MeasurementType.MESSAGE_CONSTRAINTS, e);
-            }
+            MeasurementType type = ParserUtil.parseMeasurementType(
+                    arguments.getValue(PREFIX_MEASUREMENT_TYPE).orElseThrow());
             return new DeleteMeasureCommand(index, date, type);
         } catch (ParseException e) {
             throw new ParseException(e.getMessage() + "\nUse: " + DeleteMeasureCommand.MESSAGE_USAGE, e);

@@ -16,6 +16,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.MeasurementType;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.progress.ExerciseName;
@@ -35,6 +36,22 @@ public class ParserUtilTest {
 
     private static final String WHITESPACE = " \t\r\n";
     private static final String FUTURE_DATE_MESSAGE = "The record date cannot be in the future.";
+
+    @Test
+    public void parseMeasurementType_validTypes_ignoresCaseAndWhitespace() throws Exception {
+        assertEquals(MeasurementType.WEIGHT, ParserUtil.parseMeasurementType("  WeIgHt  "));
+        assertEquals(MeasurementType.BODYFAT, ParserUtil.parseMeasurementType("\tBoDyFaT\n"));
+        assertEquals(MeasurementType.WAIST, ParserUtil.parseMeasurementType(" waist "));
+    }
+
+    @Test
+    public void parseMeasurementType_invalidTypes_usesMeasurementConstraints() {
+        for (String type : List.of("", " ", "height", "body fat", "weight extra")) {
+            assertThrows(ParseException.class, MeasurementType.MESSAGE_CONSTRAINTS, () ->
+                    ParserUtil.parseMeasurementType(type));
+        }
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMeasurementType(null));
+    }
 
     @Test
     public void parseIndex_invalidInput_throwsParseException() {
